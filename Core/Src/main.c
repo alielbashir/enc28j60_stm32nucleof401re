@@ -59,7 +59,7 @@ static void MX_SPI2_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-uint8_t spiData[2]={5,6};
+uint8_t spiData[2]={0, 0};
 /* USER CODE END 0 */
 
 /**
@@ -103,14 +103,17 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
+	  if (spiData[0] == 0x1f)
+	  		  spiData[0] =  0x00;
+
 	  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_4, GPIO_PIN_RESET);
 
 	  HAL_SPI_Transmit(&hspi2, &spiData[0], 1, 100);
-//	  HAL_SPI_Receive(&hspi2, &spiData[1], 1, 100);
+	  HAL_SPI_Receive(&hspi2, &spiData[1], 1, 100);
 
 
 	  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_4, GPIO_PIN_SET);
-	  //spiData[0]++;
+	  spiData[0]++;
 	  HAL_Delay(200);
   }
   /* USER CODE END 3 */
@@ -183,7 +186,7 @@ static void MX_SPI2_Init(void)
   hspi2.Init.CLKPolarity = SPI_POLARITY_LOW;
   hspi2.Init.CLKPhase = SPI_PHASE_1EDGE;
   hspi2.Init.NSS = SPI_NSS_SOFT;
-  hspi2.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_256;
+  hspi2.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_128;
   hspi2.Init.FirstBit = SPI_FIRSTBIT_MSB;
   hspi2.Init.TIMode = SPI_TIMODE_DISABLE;
   hspi2.Init.CRCCalculation = SPI_CRCCALCULATION_DISABLE;
