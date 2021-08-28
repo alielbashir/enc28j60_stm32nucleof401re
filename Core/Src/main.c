@@ -19,7 +19,7 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
-
+#include "library.h"
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 
@@ -94,6 +94,32 @@ int main(void)
   MX_SPI2_Init();
   /* USER CODE BEGIN 2 */
 
+	Enc_Write_Operation(ENC_REC_WRITE_REG, ECON1, BANK_0);//switch to the bank 0
+	HAL_Delay(200);
+	uint8_t a =  Enc_Read_Operation(ENC28_READ_CTRL_REG, ECON1);HAL_Delay(200);
+
+
+	Enc_Write_Operation(ENC_REC_WRITE_REG, MAADR5, MAC_5);
+	HAL_Delay(200);
+
+	Enc_Write_Operation(ENC_REC_WRITE_REG, ECON1, BANK_3);
+	HAL_Delay(200);
+
+	Enc_Write_Operation(ENC_REC_WRITE_REG, MAADR6, MAC_6);HAL_Delay(200);
+	Enc_Write_Operation(ENC_REC_WRITE_REG, MAADR3, MAC_3);HAL_Delay(200);
+	Enc_Write_Operation(ENC_REC_WRITE_REG, MAADR4, MAC_4);HAL_Delay(200);
+	Enc_Write_Operation(ENC_REC_WRITE_REG, MAADR1, MAC_1);HAL_Delay(200);
+	Enc_Write_Operation(ENC_REC_WRITE_REG, MAADR2, MAC_2);HAL_Delay(200);
+
+
+	Enc_Read_Operation(ENC28_READ_CTRL_REG, MAADR5);HAL_Delay(200);
+	Enc_Read_Operation(ENC28_READ_CTRL_REG, MAADR6);HAL_Delay(200);
+	Enc_Read_Operation(ENC28_READ_CTRL_REG, MAADR3);HAL_Delay(200);
+	Enc_Read_Operation(ENC28_READ_CTRL_REG, MAADR4);HAL_Delay(200);
+	Enc_Read_Operation(ENC28_READ_CTRL_REG, MAADR1);HAL_Delay(200);
+	Enc_Read_Operation(ENC28_READ_CTRL_REG, MAADR2);
+
+
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -103,18 +129,11 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-	  if (spiData[0] == 0x1f)
-	  		  spiData[0] =  0x00;
-
-	  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_4, GPIO_PIN_RESET);
-
-	  HAL_SPI_Transmit(&hspi2, &spiData[0], 1, 100);
-	  HAL_SPI_Receive(&hspi2, &spiData[1], 1, 100);
 
 
-	  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_4, GPIO_PIN_SET);
-	  spiData[0]++;
-	  HAL_Delay(200);
+
+
+
   }
   /* USER CODE END 3 */
 }

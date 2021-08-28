@@ -1,0 +1,9 @@
+library.c:7:9:Enc_Read_Operation	24	static
+library.c:34:6:Enc_Write_Operation	24	static
+library.c:50:9:Enc_Read_Cont_Reg8	16	static
+library.c:59:6:Enc_Write_Cont_Reg8	16	static
+library.c:67:10:Enc_Read_Cont_Reg16	24	static
+library.c:78:6:Enc_Write_Cont_Reg16	24	static
+library.c:88:6:Enc_INIT	16	static
+library.c:157:6:Spi_Enable	8	static
+library.c:164:6:Spi_Disable	8	static

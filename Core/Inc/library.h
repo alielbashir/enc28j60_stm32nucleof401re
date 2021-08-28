@@ -21,11 +21,11 @@ void Enc_Write_Cont_Reg16(uint8_t address_l, uint16_t dat,  uint8_t BANK_);
 void Enc_INIT(void);
 
 
-#define ENC28_READ_CTRL_REG 0x00
-#define ENC_REC_WRITE_REG 	0x02
-#define ENC28_SOFT_RESET 0x07
-#define ENC28_READ_CTRL_REG 0x00
-#define ENC28J60_BIT_FIELD_SET 0x04
+#define ENC28_READ_CTRL_REG          0x00
+#define ENC_REC_WRITE_REG 	         0x02
+#define ENC28_SOFT_RESET 	         0x07
+#define ENC28_READ_CTRL_REG          0x00
+#define ENC28J60_BIT_FIELD_SET       0x04
 
 
 #define BANK_0  0x00

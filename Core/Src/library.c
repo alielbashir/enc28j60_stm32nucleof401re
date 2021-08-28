@@ -1,14 +1,8 @@
 #include "library.h"
 
-extern SPI_HandleTypeDef hspi1;
-/*
-typedef union{
+extern SPI_HandleTypeDef hspi2;
 
-};
-typedef enum {
-	unint_8 a;
-}Registers;
-*/
+
 
 uint8_t Enc_Read_Operation(uint8_t operation, uint8_t address)
 {
@@ -29,8 +23,8 @@ uint8_t Enc_Read_Operation(uint8_t operation, uint8_t address)
 	spiData[0] = (operation << 5) | address; // last 3 bits are operation, first 5 bit of a byte is argument, shown above
 
 	Spi_Enable();
-	HAL_SPI_Transmit(&hspi1, spiData, 1, 100);
-	HAL_SPI_Receive(&hspi1, &spiData[1], 1, 100);
+	HAL_SPI_Transmit(&hspi2, &spiData[0], 1, 100);
+	HAL_SPI_Receive(&hspi2, &spiData[1], 1, 100);
 	Spi_Disable();
 
 	return spiData[1];
@@ -46,7 +40,7 @@ void Enc_Write_Operation(uint8_t operation, uint8_t address, uint8_t  data)
 	spiData[0] = (operation << 5) | address;
 	spiData[1] = data;
 
-	HAL_SPI_Transmit(&hspi1, spiData, 2, 100);
+	HAL_SPI_Transmit(&hspi2, spiData, 2, 100);
 
 	Spi_Disable();
 
@@ -93,7 +87,6 @@ void Enc_Write_Cont_Reg16(uint8_t address_l, uint16_t data,  uint8_t BANK_)
 
 void Enc_INIT()
 {
-
 	Spi_Enable();
 
 	Enc_Write_Operation(ENC28_SOFT_RESET, 0x1F, 0x00);
