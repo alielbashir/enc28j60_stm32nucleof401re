@@ -19,8 +19,16 @@ void Enc_Write_Cont_Reg8(uint8_t address, uint8_t data);
 uint16_t Enc_Read_Cont_Reg16(uint8_t address);
 void Enc_Write_Cont_Reg16(uint8_t address, uint16_t data);
 
-uint16_t Enc_Read_Cont_Reg16(uint8_t address,  uint8_t BANK_);
-void Enc_Write_Cont_Reg16(uint8_t address_l, uint16_t dat,  uint8_t BANK_);
+void Enc_Read_Phy_Registers(void);
+void Enc_Phy_Register_INIT(void);
+
+void ENC_SET_BANK_0_REGISTERS(void);
+void ENC_SET_BANK_1_REGISTERS(void);
+void ENC_SET_BANK_2_REGISTERS(void);
+void ENC_SET_BANK_3_REGISTERS(void);
+
+uint8_t Enc_Read_Buffer_toMemory(uint8_t address);
+void Enc_Write_Buffer_toMemory(uint8_t *data);
 
 
 void Enc_INIT(void);
