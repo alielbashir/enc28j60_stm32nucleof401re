@@ -1,4 +1,4 @@
-#include "library.h"
+#include <library.h>
 
 extern SPI_HandleTypeDef hspi2;
 
@@ -6,6 +6,7 @@ extern SPI_HandleTypeDef hspi2;
 
 uint8_t Enc_Read_Operation(uint8_t operation, uint8_t address)
 {
+
 	// shift 5 times (page 28 "SPI INSTRUCTION SET")
 	//									{ Byte 0  }		 |	{   Byte 1  }
 	//			First byte		Opcode 		Argument 	 |	Data
@@ -33,6 +34,7 @@ uint8_t Enc_Read_Operation(uint8_t operation, uint8_t address)
 
 void Enc_Write_Operation(uint8_t operation, uint8_t address, uint8_t  data)
 {
+
 	uint8_t spiData[2];
 
 	Spi_Enable();
@@ -47,46 +49,66 @@ void Enc_Write_Operation(uint8_t operation, uint8_t address, uint8_t  data)
 }
 
 
-uint8_t Enc_Read_Cont_Reg8(uint8_t address, uint8_t BANK_)
+uint8_t Enc_Read_Cont_Reg8(uint8_t address)
 {
-	Enc_Write_Operation(ENC_REC_WRITE_REG, ECON1, BANK_); // bank is selected
 
-	return Enc_Read_Operation(ENC28_READ_CTRL_REG , address); 		  // choose operation that wanted
+	return Enc_Read_Operation(ENC28_READ_CTRL_REG , address); // choose operation that wanted
 
 }
 
 
-void Enc_Write_Cont_Reg8(uint8_t address, uint8_t data, uint8_t BANK_)
-{
+void Set_Bank(uint8_t BANK_){
+
 	Enc_Write_Operation(ENC_REC_WRITE_REG, ECON1, BANK_); // bank is selected
+
+}
+
+
+void Enc_Write_Cont_Reg8(uint8_t address, uint8_t data)
+{
 
 	Enc_Write_Operation(ENC_REC_WRITE_REG, address, data); // choose operation that wanted
 
+
 }
 
-uint16_t Enc_Read_Cont_Reg16(uint8_t address,  uint8_t BANK_)
+uint16_t Enc_Read_Cont_Reg16(uint8_t address)
 {
+
 	uint16_t data_16bit = 0x00;
 
-	data_16bit |= (uint16_t)(Enc_Read_Cont_Reg8(address, BANK_));
-	data_16bit |= (uint16_t)(Enc_Read_Cont_Reg8(address + 1, BANK_) << 8);
+	data_16bit |= (uint16_t)(Enc_Read_Cont_Reg8(address));
+	data_16bit |= (uint16_t)(Enc_Read_Cont_Reg8(address + 1) << 8);
 
 	return data_16bit;
 
 }
 
-void Enc_Write_Cont_Reg16(uint8_t address_l, uint16_t data,  uint8_t BANK_)
+
+void Enc_Read_Phy_Registers(void){
+
+}
+
+void Enc_Phy_Register_INIT(void)
 {
+
+}
+
+
+void Enc_Write_Cont_Reg16(uint8_t address, uint16_t data)
+{
+
 	uint8_t datalow = (uint8_t)(data & 0x00FF);
 	uint8_t datahigh = (uint8_t)((data & 0xFF00) >> 8);
 
-	Enc_Write_Cont_Reg8(address_l, datalow, BANK_);
-	Enc_Write_Cont_Reg8((address_l + 1), datahigh, BANK_);// shift for last 8 bits
+	Enc_Write_Cont_Reg8(address, datalow);
+	Enc_Write_Cont_Reg8((address + 1), datahigh);// shift for last 8 bits
 
 }
 
 void Enc_INIT()
 {
+
 	Spi_Enable();
 
 	Enc_Write_Operation(ENC28_SOFT_RESET, 0x1F, 0x00);
@@ -161,9 +183,12 @@ void Spi_Enable(void)
 
 }
 
+
 void Spi_Disable(void)
 {
 
 	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_4, GPIO_PIN_SET);	  // set cs pin high
 
 }
+
+

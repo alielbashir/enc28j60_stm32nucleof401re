@@ -1,18 +1,23 @@
 #ifndef __LIBRARY_H
 #define __LIBRARY_H
 
-#include "stm32f4xx_hal.h"
-#include "main.h"
+#include <stm32f4xx_hal.h>
+#include <main.h>
 
 
 void Spi_Enable(void);
 void Spi_Disable(void);
 
+void Set_Bank(uint8_t BANK_);
+
 uint8_t Enc_Read_Operation(uint8_t operation, uint8_t address);
 void Enc_Write_Operation(uint8_t operation, uint8_t address, uint8_t  data);
 
-uint8_t Enc_Read_Cont_Reg8(uint8_t address, uint8_t BANK_);
-void Enc_Write_Cont_Reg8(uint8_t address, uint8_t data, uint8_t BANK_);
+uint8_t Enc_Read_Cont_Reg8(uint8_t address);
+void Enc_Write_Cont_Reg8(uint8_t address, uint8_t data);
+
+uint16_t Enc_Read_Cont_Reg16(uint8_t address);
+void Enc_Write_Cont_Reg16(uint8_t address, uint16_t data);
 
 uint16_t Enc_Read_Cont_Reg16(uint8_t address,  uint8_t BANK_);
 void Enc_Write_Cont_Reg16(uint8_t address_l, uint16_t dat,  uint8_t BANK_);
@@ -22,7 +27,9 @@ void Enc_INIT(void);
 
 
 #define ENC28_READ_CTRL_REG          0x00
+#define ENC28_READ_BUFFER_MEMORY	 0X01
 #define ENC_REC_WRITE_REG 	         0x02
+#define ENC_WRITE_BUFFER_MEMORY		 0X03
 #define ENC28_SOFT_RESET 	         0x07
 #define ENC28_READ_CTRL_REG          0x00
 #define ENC28J60_BIT_FIELD_SET       0x04
@@ -34,10 +41,10 @@ void Enc_INIT(void);
 #define BANK_3  0x03
 
 
-#define RXSTART_INIT	 0x0
-#define RXSTOP_INIT		(0x1fff-0x0600-1)
-#define TXSTART_INIT	(0x1fff-0x0600)
-#define TXSTOP_INIT		 0x1fff
+#define TXSTART_INIT	 0x0
+#define TXSTOP_INIT		(0x1fff-0x0600-1)
+#define RXSTART_INIT	(0x1fff-0x0600)
+#define RXSTOP_INIT		 0x1fff
 
 #define MAX_FRAMELEN   1500
 // Bank0 - control registers addresses
@@ -124,6 +131,7 @@ void Enc_INIT(void);
 #define EIR_PKTIF 								0x40
 #define EIR_TXIF								0x08
 #define MICMD_MIIRD								0x01
+#define BUFFER_REGISTER						0x1A
 
 // Common registers
 #define EIR											0x1C
@@ -133,3 +141,8 @@ void Enc_INIT(void);
 
 
 #endif /* __LIBRARY_H */
+
+#ifdef stdio
+	#include <stdio.h>
+#endif
+
