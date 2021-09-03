@@ -150,7 +150,7 @@ void Enc_INIT(void);
 
 #endif /* __LIBRARY_H */
 
-#ifdef stdio
-	#include <stdio.h>
+#ifdef stdint
+	#include <stdint.h>
 #endif
 
