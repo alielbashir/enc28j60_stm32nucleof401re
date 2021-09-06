@@ -59,13 +59,33 @@ static void MX_SPI2_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-uint8_t spiData[2]={0, 0};
+
+//uint8_t spiData[2]={0, 0};
+
+//uint8_t a,b;
+
+
+uint8_t mydata[42] ={ 0xff,0xff,0xff,0xff,0xff,0xff,	// mac address router 0x00,0x12,0x17,0x6f,0xc7,0x19,
+                      0xdc,0x41,0xa9,0x75,0xcd,0xa8,	// PC mac address
+                      0x08,0x06, 						// Ether type (ARP)
+                      0x00,0x01,						// HTYPE (Ethernet)
+                      0x08,0x00,						// IP
+                      0x06,								// HLEN (6)
+                      0x04,								// PLEN (4)
+                      0x00,0x01,						// OPER (Request)
+                      0xdc,0x41,0xa9,0x75,0xcd,0xa8,	// Sender Mac(PC)
+                      0x1e,0xa,0xd,0xb,					// Sender IP(PC)
+                      0x00,0x00,0x00,0x00,0x00,0x00,	// Target Mac(deafult)
+                      0x1e,0xb,0xd,0x01};				// Target IP(Router)
+uint8_t Read_data[50];
+
 /* USER CODE END 0 */
 
 /**
   * @brief  The application entry point.
   * @retval int
   */
+
 int main(void)
 {
   /* USER CODE BEGIN 1 */
@@ -79,6 +99,7 @@ int main(void)
 
   /* USER CODE BEGIN Init */
 
+
   /* USER CODE END Init */
 
   /* Configure the system clock */
@@ -90,10 +111,20 @@ int main(void)
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
+  Spi_Disable();
   MX_USART2_UART_Init();
   MX_SPI2_Init();
+
+  Enc_INIT(); // <---
+
   /* USER CODE BEGIN 2 */
 
+  Enc_Transmit_Packet((uint16_t)42, mydata);
+
+  Enc_Read_Buffer_Memory(sizeof(Read_data), Read_data);
+
+
+  /*
 	Enc_Write_Operation(ENC_REC_WRITE_REG, ECON1, BANK_0);//switch to the bank 0
 	HAL_Delay(200);
 	uint8_t a =  Enc_Read_Operation(ENC28_READ_CTRL_REG, ECON1);HAL_Delay(200);
@@ -118,7 +149,7 @@ int main(void)
 	Enc_Read_Operation(ENC28_READ_CTRL_REG, MAADR4);HAL_Delay(200);
 	Enc_Read_Operation(ENC28_READ_CTRL_REG, MAADR1);HAL_Delay(200);
 	Enc_Read_Operation(ENC28_READ_CTRL_REG, MAADR2);
-
+*/
 
   /* USER CODE END 2 */
 

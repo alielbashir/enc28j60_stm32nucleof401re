@@ -1,7 +1,6 @@
-#include <library.h>
+#include "library.h"
 
 extern SPI_HandleTypeDef hspi2;
-
 
 
 uint8_t Enc_Read_Operation(uint8_t operation, uint8_t address)
@@ -19,13 +18,14 @@ uint8_t Enc_Read_Operation(uint8_t operation, uint8_t address)
 	// System Reset Command 	1 1 1		1 1 1 1 1    |	N\A
 	//                          7 6 5       4 3 2 1 0	 |
 
-	uint8_t spiData[2];
-
-	spiData[0] = (operation << 5) | address; // last 3 bits are operation, first 5 bit of a byte is argument, shown above
+	uint8_t spiData[] = {(operation << 5) | address, 0xFF}; // last 3 bits are operation, first 5 bit of a byte is argument, shown above
 
 	Spi_Enable();
+
 	HAL_SPI_Transmit(&hspi2, &spiData[0], 1, 100);
+
 	HAL_SPI_Receive(&hspi2, &spiData[1], 1, 100);
+
 	Spi_Disable();
 
 	return spiData[1];
@@ -35,12 +35,9 @@ uint8_t Enc_Read_Operation(uint8_t operation, uint8_t address)
 void Enc_Write_Operation(uint8_t operation, uint8_t address, uint8_t  data)
 {
 
-	uint8_t spiData[2];
+	uint8_t spiData[] = {(operation << 5) | address, data};
 
 	Spi_Enable();
-
-	spiData[0] = (operation << 5) | address;
-	spiData[1] = data;
 
 	HAL_SPI_Transmit(&hspi2, spiData, 2, 100);
 
@@ -69,7 +66,6 @@ void Enc_Write_Cont_Reg8(uint8_t address, uint8_t data)
 
 	Enc_Write_Operation(ENC_REC_WRITE_REG, address, data); // choose operation that wanted
 
-
 }
 
 uint16_t Enc_Read_Cont_Reg16(uint8_t address)
@@ -85,9 +81,11 @@ uint16_t Enc_Read_Cont_Reg16(uint8_t address)
 }
 
 
-void Enc_Read_Phy_Registers(void){
+void Enc_Read_Phy_Registers(void)
+{
 
 }
+
 
 void Enc_Phy_Register_INIT(void)
 {
@@ -109,12 +107,10 @@ void Enc_Write_Cont_Reg16(uint8_t address, uint16_t data)
 void Enc_INIT()
 {
 
-	Spi_Enable();
-
-	Enc_Write_Operation(ENC28_SOFT_RESET, 0x1F, 0x00);
+	Enc_Write_Operation(ENC28_SOFT_RESET, 0x1f, 0x00);
 
 
-	while (!Enc_Read_Operation(ENC28_READ_CTRL_REG, ESTAT) & ESTAT_CLKRDY);
+	//while (!Enc_Read_Operation(ENC28_READ_CTRL_REG, ESTAT) & ESTAT_CLKRDY);
 
 
 	ENC_SET_BANK_0_REGISTERS();
@@ -125,7 +121,7 @@ void Enc_INIT()
 
 	ENC_SET_BANK_3_REGISTERS();
 
-	Spi_Disable();
+	HAL_Delay(2500);
 
 }
 
@@ -157,7 +153,7 @@ void ENC_SET_BANK_0_REGISTERS(void)
 	// no loopback of transmitted frames
 	Enc_Write_Cont_Reg16(PHCON2, PHCON2_HDLDIS);
 
-	// enable interrutps
+	// enable interrupts
 	Enc_Write_Operation(ENC28J60_BIT_FIELD_SET, EIE, EIE_INTIE|EIE_PKTIE);
 
 	// enable packet reception
@@ -220,42 +216,92 @@ void ENC_SET_BANK_3_REGISTERS(void)
 }
 
 
-uint8_t Enc_Read_Buffer_toMemory(uint8_t address)
+void Enc_Read_Buffer_Memory(uint16_t len, uint8_t* data)
 {
 
-	uint8_t spiData[2];
-
-	spiData[0] = (ENC_WRITE_BUFFER_MEMORY << 5) | address; // last 3 bits are operation, first 5 bit of a byte is argument, shown above
 
 	Spi_Enable();
-	HAL_SPI_Transmit(&hspi2, &spiData[0], 1, 100);
-	HAL_SPI_Receive(&hspi2, &spiData[1], 1, 100);
+
+	Enc_Write_Operation(ENC28_READ_BUFFER_MEMORY, READ_BUFFER_MEMORY_ADDRESS, 0xFF);
+
+	while (len--){
+		*data++ =  Enc_Read_Operation(0, 0);
+	}
+
+
 	Spi_Disable();
 
-	return spiData[1];
 
 }
 
 
-void Enc_Write_Buffer_toMemory(uint8_t *data)
+void Enc_Write_Buffer_toMemory(uint16_t length ,uint8_t *data)
 {
 
 	uint8_t spiData[2] = {(ENC_REC_WRITE_REG << 5) | BUFFER_REGISTER, 0xFF};
 
 	Spi_Enable();
 
-	HAL_SPI_Transmit(&hspi2, &spiData[0], 1, 100);
+	HAL_SPI_Transmit(&hspi2, spiData, 2, 100);
+	HAL_SPI_Transmit(&hspi2, data, length, 100);
 
-	//HAL_SPI_Transmit(&hspi2, data, sizeof(data), 100);
+
+	Spi_Disable();
+
+	/*
+	Spi_Enable();
+
+	HAL_SPI_Transmit(&hspi2, &spiData[0], 1, 100);
 
 	do
 	{
 
 		HAL_SPI_Transmit(&hspi2, data, sizeof(data), 100);
+		HAL_Delay(200);
 
 	}while(*data++);
 
 	Spi_Disable();
+	*/
+}
+
+
+void Enc_Transmit_Packet(uint16_t length, uint8_t *data)
+{
+
+	uint16_t count = 0;
+
+	// SET AND CLEAR THE FIELDS THAT DEFINED IN DATASHEET
+
+	Enc_Write_Operation(ENC28J60_BIT_FIELD_SET, ECON1, ECON1_TXRST);
+
+	Enc_Write_Operation(ENC28J60_BIT_FIELD_CLR, ECON1, ECON1_TXRST);
+
+	Enc_Write_Operation(ENC28J60_BIT_FIELD_CLR, EIR, EIR_TXERIF|EIR_TXIF);
+
+	// prepare new transmission
+
+	/////////////////////////////////////////////////
+
+	Enc_Write_Cont_Reg16(EWRPT, TXSTART_INIT);
+
+	Enc_Write_Cont_Reg16(ETXND, TXSTART_INIT + length);
+
+	Enc_Write_Operation(ENC_WRITE_BUFFER_MEMORY, 0, 0);  //line 485 enc28j60.cpp
+
+	Enc_Write_Buffer_toMemory(length, data);
+
+
+	//////////////////////////////////////////////////
+
+	// initiate transmission
+	Enc_Write_Operation(ENC28J60_BIT_FIELD_SET, ECON1, ECON1_TXRTS);
+
+
+	//while ((Enc_Read_Cont_Reg8(EIR) & (EIR_TXIF | EIR_TXERIF)) == 0 && ++count < 1000U);
+
+
+	Enc_Write_Operation(ENC28J60_BIT_FIELD_CLR, ECON1, ECON1_TXRTS);
 
 }
 
@@ -274,5 +320,4 @@ void Spi_Disable(void)
 	HAL_GPIO_WritePin(GPIOA, GPIO_PIN_4, GPIO_PIN_SET);	  // set cs pin high
 
 }
-
 

@@ -27,9 +27,10 @@ void ENC_SET_BANK_1_REGISTERS(void);
 void ENC_SET_BANK_2_REGISTERS(void);
 void ENC_SET_BANK_3_REGISTERS(void);
 
-uint8_t Enc_Read_Buffer_toMemory(uint8_t address);
-void Enc_Write_Buffer_toMemory(uint8_t *data);
+void Enc_Read_Buffer_Memory(uint16_t len, uint8_t* address);
+void Enc_Write_Buffer_toMemory(uint16_t length ,uint8_t *data);
 
+void Enc_Transmit_Packet(uint16_t length,uint8_t* data);
 
 void Enc_INIT(void);
 
@@ -39,8 +40,8 @@ void Enc_INIT(void);
 #define ENC_REC_WRITE_REG 	         0x02
 #define ENC_WRITE_BUFFER_MEMORY		 0X03
 #define ENC28_SOFT_RESET 	         0x07
-#define ENC28_READ_CTRL_REG          0x00
 #define ENC28J60_BIT_FIELD_SET       0x04
+#define ENC28J60_BIT_FIELD_CLR       0x05
 
 
 #define BANK_0  0x00
@@ -55,6 +56,7 @@ void Enc_INIT(void);
 #define RXSTOP_INIT		 0x1fff
 
 #define MAX_FRAMELEN   1500
+#define READ_BUFFER_MEMORY_ADDRESS 0x1A
 // Bank0 - control registers addresses
 #define ERDPT		0x00
 #define EWRPT		0x02
@@ -77,6 +79,7 @@ void Enc_INIT(void);
 #define MAIPGH 0x07
 #define MAMXFLL	0x0a
 #define PHCON2_HDLDIS 0x0100
+
 #define PHCON2 0x10
 #define EIE 0x1b
 #define EIE_INTIE 0x80
@@ -102,14 +105,7 @@ void Enc_INIT(void);
 #define MAADR4	0x03
 #define MAADR1 	0x04
 #define MAADR2	0x05
-/*
-#define MAADR1           (0x00)
-#define MAADR0           (0x01)
-#define MAADR3           (0x02)
-#define MAADR2           (0x03)
-#define MAADR5           (0x04)
-#define MAADR4           (0x05)
-*/
+
 
 // BitField Defines
 #define ERXFCON									0x18
@@ -139,7 +135,7 @@ void Enc_INIT(void);
 #define EIR_PKTIF 								0x40
 #define EIR_TXIF								0x08
 #define MICMD_MIIRD								0x01
-#define BUFFER_REGISTER						0x1A
+#define BUFFER_REGISTER							0x1A
 
 // Common registers
 #define EIR											0x1C
@@ -150,7 +146,7 @@ void Enc_INIT(void);
 
 #endif /* __LIBRARY_H */
 
-#ifdef stdint
+#ifndef stdint
 	#include <stdint.h>
 #endif
 
