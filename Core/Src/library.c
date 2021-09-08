@@ -23,7 +23,7 @@ uint8_t Enc_Read_Operation(uint8_t operation, uint8_t address)
 	spiData[0] = (operation << 5) | address; // last 3 bits are operation, first 5 bit of a byte is argument, shown above
 
 	Spi_Enable();
-	HAL_SPI_Transmit(&hspi2, &spiData[0], 1, 100);
+	HAL_SPI_Transmit(&hspi2, spiData, 1, 100);
 	HAL_SPI_Receive(&hspi2, &spiData[1], 1, 100);
 	Spi_Disable();
 
