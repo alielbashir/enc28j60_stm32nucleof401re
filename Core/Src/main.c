@@ -94,17 +94,11 @@ int main(void)
   MX_SPI2_Init();
   /* USER CODE BEGIN 2 */
 
-	Enc_Write_Operation(ENC_REC_WRITE_REG, ECON1, BANK_0);//switch to the bank 0
-	HAL_Delay(200);
-	uint8_t a =  Enc_Read_Operation(ENC28_READ_CTRL_REG, ECON1);HAL_Delay(200);
 
-
-	Enc_Write_Operation(ENC_REC_WRITE_REG, MAADR5, MAC_5);
-	HAL_Delay(200);
 
 	Enc_Write_Operation(ENC_REC_WRITE_REG, ECON1, BANK_3);
 	HAL_Delay(2000);
-//
+
 //	Enc_Write_Operation(ENC_REC_WRITE_REG, MAADR5, MAC_5);HAL_Delay(200);
 //	Enc_Write_Operation(ENC_REC_WRITE_REG, MAADR6, MAC_6);HAL_Delay(200);
 //	Enc_Write_Operation(ENC_REC_WRITE_REG, MAADR3, MAC_3);HAL_Delay(200);
