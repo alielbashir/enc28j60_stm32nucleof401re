@@ -252,6 +252,7 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin);
 /** @defgroup GPIO_Private_Constants GPIO Private Constants
   * @{
   */
+
 #define GPIO_MODE_Pos                           0U
 #define GPIO_MODE                               (0x3UL << GPIO_MODE_Pos)
 #define MODE_INPUT                              (0x0UL << GPIO_MODE_Pos)

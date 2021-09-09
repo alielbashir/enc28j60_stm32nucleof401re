@@ -11,15 +11,16 @@ void Spi_Disable(void);
 uint8_t Enc_Read_Operation(uint8_t operation, uint8_t address);
 void Enc_Write_Operation(uint8_t operation, uint8_t address, uint8_t  data);
 
-uint8_t Enc_Read_Cont_Reg8(uint8_t address, uint8_t BANK_);
-void Enc_Write_Cont_Reg8(uint8_t address, uint8_t data, uint8_t BANK_);
+uint8_t Enc_Read_Cont_Reg8(uint8_t address);
+void Enc_Write_Cont_Reg8(uint8_t address, uint8_t data);
 
-uint16_t Enc_Read_Cont_Reg16(uint8_t address,  uint8_t BANK_);
-void Enc_Write_Cont_Reg16(uint8_t address_l, uint16_t dat,  uint8_t BANK_);
+uint16_t Enc_Read_Cont_Reg16(uint8_t address);
+void Enc_Write_Cont_Reg16(uint8_t address_l, uint16_t data);
 
 
 void Enc_INIT(void);
 
+void Enc_Set_Bank(uint8_t BANK_);
 
 #define ENC28_READ_CTRL_REG          0x00
 #define ENC_REC_WRITE_REG 	         0x02
@@ -33,11 +34,11 @@ void Enc_INIT(void);
 #define BANK_2  0x02
 #define BANK_3  0x03
 
+#define TXSTART_INIT	0x120
+#define TXSTOP_INIT		(0x1fff-0x0600-1)
+#define RXSTART_INIT	(0x1fff-0x0600)
+#define RXSTOP_INIT		0x1fff
 
-#define RXSTART_INIT	 0x0
-#define RXSTOP_INIT		(0x1fff-0x0600-1)
-#define TXSTART_INIT	(0x1fff-0x0600)
-#define TXSTOP_INIT		 0x1fff
 
 #define MAX_FRAMELEN   1500
 // Bank0 - control registers addresses
@@ -79,7 +80,8 @@ void Enc_INIT(void);
 #define MAC_5			0x42  //0x69
 #define MAC_6			0xDC  //0x74
 
-#define MACON1	0x0
+#define MACON1	0x00
+#define MACON4	0x03
 
 #define MAADR5  0x00
 #define MAADR6  0x01
@@ -118,6 +120,7 @@ void Enc_INIT(void);
 #define MACON3_PADCFG0							0x20
 #define MACON3_TXCRCEN							0x10
 #define MACON3_FRMLNEN							0x02
+#define MACON4_DEFER							0x40
 #define EIE_INTIE								0x80
 #define EIE_PKTIE								0x40
 #define EIR_TXERIF								0x02
@@ -130,6 +133,6 @@ void Enc_INIT(void);
 #define ESTAT										0x1D
 #define ECON1										0x1F
 #define ECON2										0x1E
-
+#define EWRPTL										0x02
 
 #endif /* __LIBRARY_H */
