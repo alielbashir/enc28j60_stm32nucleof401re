@@ -23,6 +23,7 @@ void Enc_INIT(void);
 void Enc_Set_Bank(uint8_t BANK_);
 
 #define ENC28_READ_CTRL_REG          0x00
+#define ENC28_READ_BUFFER_MEMORY     0x01
 #define ENC_REC_WRITE_REG 	         0x02
 #define ENC28_SOFT_RESET 	         0x07
 #define ENC28_READ_CTRL_REG          0x00

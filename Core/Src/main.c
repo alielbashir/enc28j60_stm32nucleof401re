@@ -64,7 +64,7 @@ static void MX_SPI2_Init(void);
 /* USER CODE BEGIN 0 */
 uint8_t spiData[2]={0, 0};
 
-uint8_t i;
+uint8_t i, incomingdata[42];
 
 uint8_t mydata[42] ={ 0xff,0xff,0xff,0xff,0xff,0xff,	// mac address router 0x00,0x12,0x17,0x6f,0xc7,0x19,
                       0xdc,0x41,0xa9,0x75,0xcd,0xa8,	// PC mac address
@@ -143,12 +143,14 @@ int main(void)
 
 
 
+
   /// SET AUTO INREMENT
   Enc_Write_Cont_Reg8(ECON2,ECON2_AUTOINC);
 
+  HAL_Delay(2000);
   Spi_Enable();
 
-  HAL_SPI_Transmit(&hspi2, (uint8_t *)0X7A, 1, 10); // WBM
+  HAL_SPI_Transmit(&hspi2, (uint8_t *)0X7A, 1, 10); // WBM Write buffer memory
 
   HAL_SPI_Transmit(&hspi2, mydata, 42, 100);
 
@@ -158,8 +160,17 @@ int main(void)
 
   uint8_t a = Enc_Read_Cont_Reg8(ESTAT); //check if the transmission is successful in TXABRT (bit 1)
 
+  Enc_Write_Cont_Reg16(ERDPT, TXSTART_INIT);
 
+  HAL_Delay(2000);
+  // receiving start
+  Spi_Enable();
 
+  HAL_SPI_Transmit(&hspi2, (uint8_t *)0X5A, 1, 10); // RBM Read buffer memory
+
+  HAL_SPI_Receive(&hspi2, incomingdata, 42, 10);
+
+  Spi_Disable();
 
 
 
