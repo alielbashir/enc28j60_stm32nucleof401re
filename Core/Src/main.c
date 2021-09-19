@@ -64,7 +64,7 @@ static void MX_SPI2_Init(void);
 /* USER CODE BEGIN 0 */
 uint8_t spiData[2]={0, 0};
 
-uint8_t i, incomingdata[42];
+uint8_t incomingdata[42];
 
 uint8_t mydata[42] ={ 0xff,0xff,0xff,0xff,0xff,0xff,	// mac address router 0x00,0x12,0x17,0x6f,0xc7,0x19,
                       0xdc,0x41,0xa9,0x75,0xcd,0xa8,	// PC mac address
@@ -111,7 +111,7 @@ int main(void)
   MX_USART2_UART_Init();
   MX_SPI2_Init();
   /* USER CODE BEGIN 2 */
-
+  uint8_t i,a;
 
   // MAC Initialization
   Enc_Set_Bank(BANK_2);
@@ -128,7 +128,8 @@ int main(void)
 
   Enc_Write_Cont_Reg16(MAIPGL, 0x12);
 
-  for ( i = 0x00 ; i < 6 ;i++ ) // TURN until my_mac_adr is NULL
+  // MAC addresses
+  for ( i = 0x00 ; i < sizeof(my_mac_adr)  ;i++ )
 	  Enc_Write_Cont_Reg8(i++, my_mac_adr[i]);
 
 
@@ -139,40 +140,34 @@ int main(void)
   Enc_Write_Cont_Reg16(EWRPTL, TXSTART_INIT);
 
 
-  /// SET THE TX BUFFER ,END
-
-
-
-
-  /// SET AUTO INREMENT
+  /// SET AUTO INCREMENT
   Enc_Write_Cont_Reg8(ECON2,ECON2_AUTOINC);
 
   HAL_Delay(2000);
-  Spi_Enable();
 
-  HAL_SPI_Transmit(&hspi2, (uint8_t *)0X7A, 1, 10); // WBM Write buffer memory
+  //start transmission
+  for ( i = 0x00 ; i < sizeof(mydata) ;i++ )
+	  Enc_Write_Operation(ENC28_WRITE_BUFFER_MEMORY_OP, ENC28_WRITE_READ_BUFFER_MEMORY_ADDRESS, mydata[i]);
 
-  HAL_SPI_Transmit(&hspi2, mydata, 42, 100);
-
-  Spi_Disable();
 
   Enc_Write_Cont_Reg16(ETXND, TXSTART_INIT + 42); // transmit border
 
-  uint8_t a = Enc_Read_Cont_Reg8(ESTAT); //check if the transmission is successful in TXABRT (bit 1)
+  // check the transmission
+  a = Enc_Read_Cont_Reg8(ESTAT); //check if the transmission is successful in TXABRT (bit 1)
 
+  // assign the read pointer
   Enc_Write_Cont_Reg16(ERDPT, TXSTART_INIT);
 
   HAL_Delay(2000);
+
+
   // receiving start
-  Spi_Enable();
 
-  HAL_SPI_Transmit(&hspi2, (uint8_t *)0X5A, 1, 10); // RBM Read buffer memory
-
-  HAL_SPI_Receive(&hspi2, incomingdata, 42, 10);
-
-  Spi_Disable();
+  for ( i = 0x00 ; i < sizeof(mydata) ;i++ )
+	  incomingdata[i] = Enc_Read_Operation(ENC28_READ_BUFFER_MEMORY, ENC28_WRITE_READ_BUFFER_MEMORY_ADDRESS);
 
 
+  uint8_t av;
 
   /* USER CODE END 2 */
 

@@ -26,8 +26,11 @@ void Enc_Set_Bank(uint8_t BANK_);
 #define ENC28_READ_BUFFER_MEMORY     0x01
 #define ENC_REC_WRITE_REG 	         0x02
 #define ENC28_SOFT_RESET 	         0x07
-#define ENC28_READ_CTRL_REG          0x00
+#define ENC28_WRITE_BUFFER_MEMORY_OP    0x03
 #define ENC28J60_BIT_FIELD_SET       0x04
+
+
+#define ENC28_WRITE_READ_BUFFER_MEMORY_ADDRESS 0x1A
 
 
 #define BANK_0  0x00
