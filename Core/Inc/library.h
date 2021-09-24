@@ -26,7 +26,7 @@ void Enc_Set_Bank(uint8_t BANK_);
 #define ENC28_READ_BUFFER_MEMORY     0x01
 #define ENC_REC_WRITE_REG 	         0x02
 #define ENC28_SOFT_RESET 	         0x07
-#define ENC28_WRITE_BUFFER_MEMORY_OP    0x03
+#define ENC28_WRITE_BUFFER_MEMORY_OP 0x03
 #define ENC28J60_BIT_FIELD_SET       0x04
 
 
@@ -43,6 +43,7 @@ void Enc_Set_Bank(uint8_t BANK_);
 #define RXSTART_INIT	(0x1fff-0x0600)
 #define RXSTOP_INIT		0x1fff
 
+#define TXRST
 
 #define MAX_FRAMELEN   1500
 // Bank0 - control registers addresses
@@ -65,7 +66,7 @@ void Enc_Set_Bank(uint8_t BANK_);
 #define MABBIPG 0x04
 #define MAIPGL 0x06
 #define MAIPGH 0x07
-#define MAMXFLL	0x0a
+#define MAMXFLL	0x0A
 #define PHCON2_HDLDIS 0x0100
 #define PHCON2 0x10
 #define EIE 0x1b
