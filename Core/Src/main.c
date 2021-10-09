@@ -46,9 +46,10 @@ SPI_HandleTypeDef hspi2;
 UART_HandleTypeDef huart2;
 
 /* USER CODE BEGIN PV */
-
-uint8_t i, my_mac_adr[] ={ 0xA8, 0XCD, 0X71, 0XA9, 0X41, 0XDC };
-
+// 5 6 3 4 1 2 mac address order
+//uint8_t i, my_mac_adr[] ={0xDE,0xAD,0xBE,0xEF,0xFE,0xED };
+//uint8_t i, my_mac_adr[] ={0x32,0x12,0xad,0x0a,0x11,0x22 };
+uint8_t i, my_mac_adr[] ={0xFE,0xED,0xad,0x0a,0xDE,0xAD };
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -67,17 +68,17 @@ uint8_t spiData[2]={0, 0};
 uint8_t incomingdata[42]={0};
 
 uint8_t mydata[42] ={ 0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,	// mac address router 0x00,0x12,0x17,0x6f,0xc7,0x19,
-					  0xDC,0x41,0xA9,0x75,0xBA,0xA8,	// PC mac address
+					  0x80,0xFA,0x5B,0x8E,0x74,0xA3,	// PC mac address
                       0x08,0x06, 						// Ether type (ARP)
                       0x00,0x01,						// HTYPE (Ethernet)
                       0x08,0x00,						// IP
                       0x06,								// HLEN (6)
                       0x04,								// PLEN (4)
                       0x00,0x01,						// OPCODE (Request)
-                      0xDC,0x41,0xA9,0x75,0xBA,0xA8,	// Sender Mac(PC)
-                      0x1E,0x0A,0x0D,0x0B,				// Sender IP(PC)
+					  0xDE,0xAD,0xBE,0xEF,0xFE,0xED, 	// Sender Mac(PC)
+                      0xC0,0xAB,0x10,0x01,				// Sender IP(PC)
                       0x00,0x00,0x00,0x00,0x00,0x00,	// Target Mac(deafult)
-                      0x1E,0x0B,0x0D,0x01};				// Target IP(Router)
+                      0xC0,0xAB,0x10,0xFE};				// Target IP(Router)
 
 
 
@@ -116,7 +117,7 @@ int main(void)
   /* USER CODE BEGIN 2 */
 
 
-  uint8_t i, a;
+
 
 
 
@@ -138,7 +139,8 @@ int main(void)
 
 
   // MAC addresses
-  for ( i = 0x00 ; i < sizeof(my_mac_adr)  ;i++ )
+  uint8_t i ;
+  for (i = 0 ; i < sizeof(my_mac_adr)  ;i++ )
 	  Enc_Write_Cont_Reg8(i++, my_mac_adr[i]);
 
 
@@ -154,37 +156,32 @@ int main(void)
   /// SET AUTO INCREMENT
   Enc_Write_Cont_Reg8(ECON2,ECON2_AUTOINC);
 
-  HAL_Delay(2000);
+  HAL_Delay(500);
 
 
 
   ////////////////////////////////////////////
   // Write Message to Memory
 
-  for ( i = 0x00 ; i < sizeof(mydata) ;i++ )
+  for ( i = 0 ; i < sizeof(mydata) ;i++ )
 	  Enc_Write_Operation(ENC28_WRITE_BUFFER_MEMORY_OP, ENC28_WRITE_READ_BUFFER_MEMORY_ADDRESS, mydata[i]);
 
 
-  Enc_Write_Cont_Reg16(ETXND, TXSTART_INIT + 42); // transmit border
+  Enc_Write_Cont_Reg16(ETXND, TXSTOP_INIT); // transmit border
 
   // check the Status Vector
-  a = Enc_Read_Cont_Reg8(ESTAT); //check if the transmission is successful in TXABRT (bit 1)
+//  a = Enc_Read_Cont_Reg8(ESTAT); //check if the transmission is successful in TXABRT (bit 1)
 
   // assign the read pointer
   Enc_Write_Cont_Reg16(ERDPT, TXSTART_INIT);
 
-  HAL_Delay(2000);
+  HAL_Delay(500);
 
 
   //////////////////////////////////////////////
   // Reading the Memory to see Do we have right message in memory
-  for ( i = 0x00 ; i < sizeof(mydata) ;i++ )
+  for ( i = 0 ; i < sizeof(mydata) ;i++ )
 	  incomingdata[i] = Enc_Read_Operation(ENC28_READ_BUFFER_MEMORY, ENC28_WRITE_READ_BUFFER_MEMORY_ADDRESS);
-
-  HAL_Delay(500);
-
-  Enc_Write_Cont_Reg8(ECON1, ECON1_TXRTS);	  // Start transmission process by setting ECON1.TXRST
-
 
 
   /* USER CODE END 2 */
@@ -196,6 +193,14 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
+	  HAL_Delay(500);
+
+	  Enc_Write_Cont_Reg8(ECON1, ECON1_TXRTS);	  // Start transmission process by setting ECON1.TXRST
+
+
+
+
+
 
   }
   /* USER CODE END 3 */

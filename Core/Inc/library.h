@@ -38,9 +38,9 @@ void Enc_Set_Bank(uint8_t BANK_);
 #define BANK_2  0x02
 #define BANK_3  0x03
 
-#define TXSTART_INIT	0x120
-#define TXSTOP_INIT		(0x1fff-0x0600-1)
-#define RXSTART_INIT	(0x1fff-0x0600)
+#define TXSTART_INIT	0x00
+#define TXSTOP_INIT		0x2a
+#define RXSTART_INIT	(TXSTOP_INIT + 1)
 #define RXSTOP_INIT		0x1fff
 
 #define TXRST
